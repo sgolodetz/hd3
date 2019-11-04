@@ -9,4 +9,4 @@ python -u inference.py \
   --workers=16 \
   --flow_format=png \
   --model_path=model_zoo/hd3fc_chairs_things_kitti-bfa97911.pth \
-  --save_folder=/media/data/datasets/kitti_raw_flow
+  --save_folder=/media/data/datasets/kitti_raw_flow_hd3
