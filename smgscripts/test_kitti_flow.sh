@@ -1,12 +1,12 @@
 python -u inference.py \
   --task=flow \
   --data_root=/media/data/datasets \
-  --data_list=smglists/KITTI_raw_flow_2011_09_26_drive_0005_sync.txt \
+  --data_list=smglists/KITTI_raw_flow_2011_09_26_drive_0009_sync.txt \
   --context \
   --encoder=dlaup \
   --decoder=hda \
   --batch_size=1 \
   --workers=16 \
-  --flow_format=png \
+  --flow_format=flo \
   --model_path=model_zoo/hd3fc_chairs_things_kitti-bfa97911.pth \
-  --save_folder=/media/data/datasets/kitti_raw_flow_hd3
+  --save_folder=/media/data/datasets/kitti_raw_flow2d_hd3
