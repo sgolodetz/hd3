@@ -194,17 +194,16 @@ def main():
             curr_bs = pred_vect.shape[0]
 
             # SMG
-            # pred_prob = output['prob'].data.cpu().numpy()
-            print(pred_vect.shape)
-            # print(pred_prob.shape)
-            # print(pred_prob[0][0])
-            pred_prob = prob_gather(output['prob'], normalize=True)
+            print(output['vect'].shape)
+            dim = output['vect'].size(1)  # Determines whether this is disparity or flow
+            print(dim)
+            pred_prob = prob_gather(output['prob'], normalize=True, dim=dim)
             H, W = resized_img_list[0].size()[2:]
             if pred_prob.size(2) != H or pred_prob.size(3) != W:
-                # pred_prob = F.interpolate(pred_prob, (H, W), mode='nearest')
                 pred_prob = F.interpolate(pred_prob, (pred_vect.shape[1], pred_vect.shape[2]), mode='nearest')
             print(pred_prob.shape)
-            cv2.imshow("Confidence Map", pred_prob[0][0].data.cpu().numpy())
+            np_pred_prob = np.uint8(pred_prob[0][0].data.cpu().numpy() * 255)
+            cv2.imshow("Confidence Map", np_pred_prob)
             cv2.waitKey(1)
 
             # # # confidence map visualization
