@@ -137,6 +137,11 @@ def main():
     check_makedirs(vis_folder)
     check_makedirs(vec_folder)
 
+    # BEGIN SMG
+    conf_folder = os.path.join(args.save_folder, 'conf')
+    check_makedirs(conf_folder)
+    # END SMG
+
     # start testing
     logger.info('>>>>>>>>>>>>>>>> Start Test >>>>>>>>>>>>>>>>')
     data_time = AverageMeter()
@@ -193,44 +198,25 @@ def main():
             pred_vect = np.transpose(pred_vect, (0, 2, 3, 1))
             curr_bs = pred_vect.shape[0]
 
-            # SMG
-            print(output['vect'].shape)
-            dim = output['vect'].size(1)  # Determines whether this is disparity or flow
-            print(dim)
+            # BEGIN SMG
+            # Determine whether this is disparity or flow (see get_visualization and prob_gather)
+            dim = output['vect'].size(1)
+
+            # Gather all the probabilities from the different maps into a single probability map.
             pred_prob = prob_gather(output['prob'], normalize=True, dim=dim)
+
+            # Resize the downsampled probability image to be the same size as the disparity/flow images.
             H, W = resized_img_list[0].size()[2:]
             if pred_prob.size(2) != H or pred_prob.size(3) != W:
                 pred_prob = F.interpolate(pred_prob, (pred_vect.shape[1], pred_vect.shape[2]), mode='nearest')
-            print(pred_prob.shape)
-            np_pred_prob = np.uint8(pred_prob[0][0].data.cpu().numpy() * 255)
-            cv2.imshow("Confidence Map", np_pred_prob)
-            cv2.waitKey(1)
 
-            # # # confidence map visualization
-            # prob = pred_prob[0].data
-            # # dim = output['vect'][0].size(1)
-            # dim = 1
-            # H, W = resized_img_list[0].size()[2:]
-            # print(dim, H, W)
-            # # prob = ms_prob[l].data
-            # prob = prob_gather(prob, normalize=True, dim=dim)
-            # print(prob.size)
-            # if prob.size(2) != H or prob.size(3) != W:
-            #     prob = F.interpolate(prob, (H, W), mode='nearest')
-            # x = prob[0].squeeze()
-            # method = cv2.COLORMAP_BONE
-            # x = np.uint8(x.cpu().numpy() * 255)
-            # x = torch.from_numpy(cv2.applyColorMap(x, method)).cuda()
-            # y = x.permute(2, 0, 1).float() / 255.0
-            # print(type(y))
-            # print(y.shape)
-            # # vis_list.append(
-            # #     _visualize_heat(prob[idx].squeeze(), cv2.COLORMAP_BONE))
-            #
-            # # def _visualize_heat(x, method=cv2.COLORMAP_JET):
-            # #     x = np.uint8(x.cpu().numpy() * 255)
-            # #     x = torch.from_numpy(cv2.applyColorMap(x, method)).cuda()
-            # #     return x.permute(2, 0, 1).float() / 255.0
+            # Convert to a greyscale image.
+            np_pred_prob = np.uint8(pred_prob[0][0].data.cpu().numpy() * 255)
+
+            # Show the greyscale image for debugging purposes.
+            # cv2.imshow("Confidence Map", np_pred_prob)
+            # cv2.waitKey(1)
+            # END SMG
 
             for idx in range(curr_bs):
                 curr_idx = i * args.batch_size + idx
@@ -242,6 +228,11 @@ def main():
                 check_makedirs(vis_sub_folder)
                 check_makedirs(vec_sub_folder)
 
+                # BEGIN SMG
+                conf_sub_folder = join(conf_folder, sub_folders[curr_idx])
+                check_makedirs(conf_sub_folder)
+                # END SMG
+
                 # save visualzation (disparity transformed to flow here)
                 vis_fn = join(vis_sub_folder, names[curr_idx] + '.png')
                 if args.task == 'flow':
@@ -250,6 +241,12 @@ def main():
                     vis_flo = fl.flow_to_image(fl.disp2flow(curr_vect))
                 vis_flo = cv2.cvtColor(vis_flo, cv2.COLOR_RGB2BGR)
                 cv2.imwrite(vis_fn, vis_flo)
+
+                # BEGIN SMG
+                # save confidence map
+                conf_fn = join(conf_sub_folder, names[curr_idx] + '.png')
+                cv2.imwrite(conf_fn, np_pred_prob)
+                # END SMG
 
                 # save point estimates
                 fn_suffix = 'png'
