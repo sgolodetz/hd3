@@ -165,6 +165,7 @@ def main():
                 img_list=resized_img_list,
                 label_list=label_list,
                 get_vect=True,
+                get_prob=True,
                 get_epe=args.evaluate)
             scale_factor = 1 / 2**(7 - len(corr_range))
             output['vect'] = resize_dense_vector(output['vect'] * scale_factor,
@@ -191,6 +192,46 @@ def main():
             pred_vect = output['vect'].data.cpu().numpy()
             pred_vect = np.transpose(pred_vect, (0, 2, 3, 1))
             curr_bs = pred_vect.shape[0]
+
+            # SMG
+            # pred_prob = output['prob'].data.cpu().numpy()
+            print(pred_vect.shape)
+            # print(pred_prob.shape)
+            # print(pred_prob[0][0])
+            pred_prob = prob_gather(output['prob'], normalize=True)
+            H, W = resized_img_list[0].size()[2:]
+            if pred_prob.size(2) != H or pred_prob.size(3) != W:
+                # pred_prob = F.interpolate(pred_prob, (H, W), mode='nearest')
+                pred_prob = F.interpolate(pred_prob, (pred_vect.shape[1], pred_vect.shape[2]), mode='nearest')
+            print(pred_prob.shape)
+            cv2.imshow("Confidence Map", pred_prob[0][0].data.cpu().numpy())
+            cv2.waitKey(1)
+
+            # # # confidence map visualization
+            # prob = pred_prob[0].data
+            # # dim = output['vect'][0].size(1)
+            # dim = 1
+            # H, W = resized_img_list[0].size()[2:]
+            # print(dim, H, W)
+            # # prob = ms_prob[l].data
+            # prob = prob_gather(prob, normalize=True, dim=dim)
+            # print(prob.size)
+            # if prob.size(2) != H or prob.size(3) != W:
+            #     prob = F.interpolate(prob, (H, W), mode='nearest')
+            # x = prob[0].squeeze()
+            # method = cv2.COLORMAP_BONE
+            # x = np.uint8(x.cpu().numpy() * 255)
+            # x = torch.from_numpy(cv2.applyColorMap(x, method)).cuda()
+            # y = x.permute(2, 0, 1).float() / 255.0
+            # print(type(y))
+            # print(y.shape)
+            # # vis_list.append(
+            # #     _visualize_heat(prob[idx].squeeze(), cv2.COLORMAP_BONE))
+            #
+            # # def _visualize_heat(x, method=cv2.COLORMAP_JET):
+            # #     x = np.uint8(x.cpu().numpy() * 255)
+            # #     x = torch.from_numpy(cv2.applyColorMap(x, method)).cuda()
+            # #     return x.permute(2, 0, 1).float() / 255.0
 
             for idx in range(curr_bs):
                 curr_idx = i * args.batch_size + idx
