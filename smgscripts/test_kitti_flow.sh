@@ -1,7 +1,7 @@
 python -u inference.py \
   --task=flow \
   --data_root=/media/data/datasets \
-  --data_list=smglists/KITTI_raw_rflow_2011_09_26_drive_0005_sync.txt \
+  --data_list=smglists/KITTI_raw_rflow_2011_09_26_drive_0011_sync.txt \
   --context \
   --encoder=dlaup \
   --decoder=hda \
