@@ -1,0 +1,5 @@
+kitti_raw/2011_09_30/2011_09_30_drive_0072_sync/image_02/data/0000000000.png kitti_raw/2011_09_30/2011_09_30_drive_0072_sync/image_03/data/0000000000.png
+kitti_raw/2011_09_30/2011_09_30_drive_0072_sync/image_02/data/0000000001.png kitti_raw/2011_09_30/2011_09_30_drive_0072_sync/image_03/data/0000000001.png
+kitti_raw/2011_09_30/2011_09_30_drive_0072_sync/image_02/data/0000000002.png kitti_raw/2011_09_30/2011_09_30_drive_0072_sync/image_03/data/0000000002.png
+kitti_raw/2011_09_30/2011_09_30_drive_0072_sync/image_02/data/0000000003.png kitti_raw/2011_09_30/2011_09_30_drive_0072_sync/image_03/data/0000000003.png
+kitti_raw/2011_09_30/2011_09_30_drive_0072_sync/image_02/data/0000000004.png kitti_raw/2011_09_30/2011_09_30_drive_0072_sync/image_03/data/0000000004.png
