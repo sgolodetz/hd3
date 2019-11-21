@@ -1,4 +1,4 @@
-#! smgscripts/binsmgscripts/bash -e
+#! /bin/bash -e
 
 smgscripts/make_kitti_flow.sh 2011_09_26_drive_0001_sync
 smgscripts/make_kitti_flow.sh 2011_09_26_drive_0002_sync
