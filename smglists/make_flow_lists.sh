@@ -2,9 +2,9 @@
 
 ./make_flow_list.sh 2011_09_26 2011_09_26_drive_0001_sync
 ./make_flow_list.sh 2011_09_26 2011_09_26_drive_0002_sync
-#./make_flow_list.sh 2011_09_26 2011_09_26_drive_0005_sync
-#./make_flow_list.sh 2011_09_26 2011_09_26_drive_0009_sync
-#./make_flow_list.sh 2011_09_26 2011_09_26_drive_0011_sync
+./make_flow_list.sh 2011_09_26 2011_09_26_drive_0005_sync
+./make_flow_list.sh 2011_09_26 2011_09_26_drive_0009_sync
+./make_flow_list.sh 2011_09_26 2011_09_26_drive_0011_sync
 ./make_flow_list.sh 2011_09_26 2011_09_26_drive_0013_sync
 ./make_flow_list.sh 2011_09_26 2011_09_26_drive_0014_sync
 ./make_flow_list.sh 2011_09_26 2011_09_26_drive_0015_sync
@@ -15,7 +15,7 @@
 ./make_flow_list.sh 2011_09_26 2011_09_26_drive_0022_sync
 ./make_flow_list.sh 2011_09_26 2011_09_26_drive_0023_sync
 ./make_flow_list.sh 2011_09_26 2011_09_26_drive_0027_sync
-#./make_flow_list.sh 2011_09_26 2011_09_26_drive_0028_sync
+./make_flow_list.sh 2011_09_26 2011_09_26_drive_0028_sync
 ./make_flow_list.sh 2011_09_26 2011_09_26_drive_0029_sync
 ./make_flow_list.sh 2011_09_26 2011_09_26_drive_0032_sync
 ./make_flow_list.sh 2011_09_26 2011_09_26_drive_0035_sync
