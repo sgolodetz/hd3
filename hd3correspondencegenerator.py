@@ -133,26 +133,6 @@ def main():
 
     args = parser.parse_args()
 
-    # Create an HD^3 flow correspondence generator.
-    flow_gen = HD3CorrespondenceGenerator(
-        task="flow",
-        encoder="dlaup",
-        decoder="hda",
-        corr_range=[4, 4, 4, 4, 4],
-        context=True,
-        model_path="model_zoo/hd3fc_chairs_things_kitti-bfa97911.pth"
-    )
-
-    # Load in the images.
-    bgr1: np.ndarray = cv2.imread("/media/data/datasets/omd/primary/cars_3_static/stereo/000040_left.png")
-    bgr2: np.ndarray = cv2.imread("/media/data/datasets/omd/primary/cars_3_static/stereo/000041_left.png")
-
-    # Generate the optic flow.
-    curr_vect, vis_flo, np_pred_prob = flow_gen.generate_correspondences(to_rgb(bgr1), to_rgb(bgr2))
-    cv2.imshow("Flow", vis_flo)
-    cv2.imshow("Confidence", np_pred_prob)
-    cv2.waitKey()
-
     # Create an HD^3 stereo correspondence generator.
     stereo_gen = HD3CorrespondenceGenerator(
         task="stereo",
@@ -163,15 +143,52 @@ def main():
         model_path="model_zoo/hd3sc_things_kitti-368975c0.pth"
     )
 
-    # Load in the images.
-    bgr1 = cv2.imread("/media/data/datasets/omd/primary/cars_3_static/stereo/000000_left.png")
-    bgr2 = cv2.imread("/media/data/datasets/omd/primary/cars_3_static/stereo/000000_right.png")
+    # Create an HD^3 flow correspondence generator.
+    flow_gen = HD3CorrespondenceGenerator(
+        task="flow",
+        encoder="dlaup",
+        decoder="hda",
+        corr_range=[4, 4, 4, 4, 4],
+        context=True,
+        model_path="model_zoo/hd3fc_chairs_things_kitti-bfa97911.pth"
+    )
 
-    # Generate the disparities.
-    curr_vect, vis_flo, np_pred_prob = stereo_gen.generate_correspondences(to_rgb(bgr1), to_rgb(bgr2))
-    cv2.imshow("Disparities", vis_flo)
-    cv2.imshow("Confidence", np_pred_prob)
-    cv2.waitKey()
+    for idx in range(100):
+        left0 = cv2.imread("/media/data/datasets/omd/primary/cars_3_static/stereo/{:06d}_left.png".format(idx))
+        right0 = cv2.imread("/media/data/datasets/omd/primary/cars_3_static/stereo/{:06d}_right.png".format(idx))
+        left1 = cv2.imread("/media/data/datasets/omd/primary/cars_3_static/stereo/{:06d}_left.png".format(idx + 1))
+
+        # Generate the disparities.
+        curr_vect, vis_flo, np_pred_prob = stereo_gen.generate_correspondences(to_rgb(left0), to_rgb(right0))
+        cv2.imshow("Disparities", vis_flo)
+        cv2.imshow("Disparities Confidence", np_pred_prob)
+        cv2.waitKey(1)
+
+        # Generate the optic flow.
+        curr_vect, vis_flo, np_pred_prob = flow_gen.generate_correspondences(to_rgb(left0), to_rgb(left1))
+        cv2.imshow("Flow", vis_flo)
+        cv2.imshow("Flow Confidence", np_pred_prob)
+        cv2.waitKey(1)
+
+    # # Load in the images.
+    # bgr1: np.ndarray = cv2.imread("/media/data/datasets/omd/primary/cars_3_static/stereo/000040_left.png")
+    # bgr2: np.ndarray = cv2.imread("/media/data/datasets/omd/primary/cars_3_static/stereo/000041_left.png")
+    #
+    # # Generate the optic flow.
+    # curr_vect, vis_flo, np_pred_prob = flow_gen.generate_correspondences(to_rgb(bgr1), to_rgb(bgr2))
+    # cv2.imshow("Flow", vis_flo)
+    # cv2.imshow("Confidence", np_pred_prob)
+    # cv2.waitKey()
+    #
+    # # Load in the images.
+    # bgr1 = cv2.imread("/media/data/datasets/omd/primary/cars_3_static/stereo/000000_left.png")
+    # bgr2 = cv2.imread("/media/data/datasets/omd/primary/cars_3_static/stereo/000000_right.png")
+    #
+    # # Generate the disparities.
+    # curr_vect, vis_flo, np_pred_prob = stereo_gen.generate_correspondences(to_rgb(bgr1), to_rgb(bgr2))
+    # cv2.imshow("Disparities", vis_flo)
+    # cv2.imshow("Confidence", np_pred_prob)
+    # cv2.waitKey()
 
 
 if __name__ == "__main__":
