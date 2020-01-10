@@ -6,16 +6,21 @@ import torch.backends.cudnn as cudnn
 import torch.nn.functional as F
 
 import data.flowtransforms as transforms
+import utils.flowlib as fl
 
 from argparse import ArgumentParser
 
 from hd3model import HD3Model
+from models.hd3_ops import *
 
 
 class HD3CorrespondenceGenerator:
     # CONSTRUCTORS
 
     def __init__(self, *, task: str, encoder: str, decoder: str, corr_range: [int], context: bool, model_path: str):
+        self.__corr_range = corr_range
+        self.__task = task
+
         # Create the model.
         logging.info("Creating model")
         self.__model = HD3Model(task, encoder, decoder, corr_range, context).cuda()
@@ -61,9 +66,8 @@ class HD3CorrespondenceGenerator:
             logging.info("Copied images")
 
             # TODO
-            # h, w, _ = img1.shape
-            # resized_img_list = [F.interpolate(img, (h, w), mode='bilinear', align_corners=True) for img in img_list]
-            resized_img_list = img_list
+            h, w, _ = img1.shape
+            resized_img_list = [F.interpolate(img, (h, w), mode='bilinear', align_corners=True) for img in img_list]
 
             # TODO
             logging.info("Running model")
@@ -75,6 +79,21 @@ class HD3CorrespondenceGenerator:
                 get_epe=False
             )
             logging.info("Ran model")
+
+            scale_factor = 1 / 2**(7 - len(self.__corr_range))
+            output['vect'] = resize_dense_vector(output['vect'] * scale_factor, h, w)
+
+            pred_vect = output['vect'].data.cpu().numpy()
+            pred_vect = np.transpose(pred_vect, (0, 2, 3, 1))
+            curr_vect = pred_vect[0]
+
+            if self.__task == "flow":
+                vis_flo = fl.flow_to_image(curr_vect)
+            else:
+                vis_flo = fl.flow_to_image(fl.disp2flow(curr_vect))
+            vis_flo = cv2.cvtColor(vis_flo, cv2.COLOR_RGB2BGR)
+
+            return vis_flo, vis_flo, vis_flo
 
 
 def to_rgb(img: np.ndarray) -> np.ndarray:
@@ -111,11 +130,13 @@ def main():
     )
 
     # Load in the images.
-    bgr1: np.ndarray = cv2.imread("/media/data/datasets/omd/primary/occlusion_2_static/stereo/000000_left.png")
-    bgr2: np.ndarray = cv2.imread("/media/data/datasets/omd/primary/occlusion_2_static/stereo/000001_left.png")
+    bgr1: np.ndarray = cv2.imread("/media/data/datasets/omd/primary/cars_3_static/stereo/000040_left.png")
+    bgr2: np.ndarray = cv2.imread("/media/data/datasets/omd/primary/cars_3_static/stereo/000041_left.png")
 
     # Generate the optic flow.
-    flow_gen.generate_correspondences(to_rgb(bgr1), to_rgb(bgr2))
+    vis_flo, _, _ = flow_gen.generate_correspondences(to_rgb(bgr1), to_rgb(bgr2))
+    cv2.imshow("Flow", vis_flo)
+    cv2.waitKey()
 
 
 if __name__ == "__main__":
