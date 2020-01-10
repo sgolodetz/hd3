@@ -1,6 +1,7 @@
 import cv2
 import logging
 import numpy as np
+import os
 import torch
 import torch.backends.cudnn as cudnn
 import torch.nn.functional as F
@@ -121,15 +122,10 @@ def main():
     # Parse any command-line arguments.
     parser = ArgumentParser()
 
-    # parser.add_argument("--remove_moving", action="store_true", help="whether to remove the moving objects")
-    # parser.add_argument("--remove_static", action="store_true", help="whether to remove the static scene")
-    #
-    # # 0 = reflectances, 1 = uniform colour per frame, 2 = image colours
-    # parser.add_argument("--rendering_type", "-r", type=int, default=0, help="the rendering type")
-    #
-    # parser.add_argument("--start_frame", "-s", type=int, default=0, help="the start frame")
-    # parser.add_argument("--end_frame", "-e", type=int, default=5, help="the end frame")
-    # parser.add_argument("--frame_step", type=int, default=1, help="the frame step")
+    parser.add_argument("--sequence_name", type=str, default="primary/cars_3_static", help="the sequence name")
+    parser.add_argument("--start_frame", "-s", type=int, default=0, help="the start frame")
+    parser.add_argument("--end_frame", "-e", type=int, default=100, help="the end frame")
+    parser.add_argument("--frame_step", type=int, default=1, help="the frame step")
 
     args = parser.parse_args()
 
@@ -153,10 +149,12 @@ def main():
         model_path="model_zoo/hd3fc_chairs_things_kitti-bfa97911.pth"
     )
 
-    for idx in range(100):
-        left0 = cv2.imread("/media/data/datasets/omd/primary/cars_3_static/stereo/{:06d}_left.png".format(idx))
-        right0 = cv2.imread("/media/data/datasets/omd/primary/cars_3_static/stereo/{:06d}_right.png".format(idx))
-        left1 = cv2.imread("/media/data/datasets/omd/primary/cars_3_static/stereo/{:06d}_left.png".format(idx + 1))
+    sequence_dir = os.path.join("/media/data/datasets/omd", args.sequence_name)
+
+    for idx in range(args.start_frame, args.end_frame, args.frame_step):
+        left0 = cv2.imread(os.path.join(sequence_dir, "stereo/{:06d}_left.png".format(idx)))
+        right0 = cv2.imread(os.path.join(sequence_dir, "stereo/{:06d}_right.png".format(idx)))
+        left1 = cv2.imread(os.path.join(sequence_dir, "stereo/{:06d}_left.png".format(idx + args.frame_step)))
 
         # Generate the disparities.
         curr_vect, vis_flo, np_pred_prob = stereo_gen.generate_correspondences(to_rgb(left0), to_rgb(right0))
@@ -169,26 +167,6 @@ def main():
         cv2.imshow("Flow", vis_flo)
         cv2.imshow("Flow Confidence", np_pred_prob)
         cv2.waitKey(1)
-
-    # # Load in the images.
-    # bgr1: np.ndarray = cv2.imread("/media/data/datasets/omd/primary/cars_3_static/stereo/000040_left.png")
-    # bgr2: np.ndarray = cv2.imread("/media/data/datasets/omd/primary/cars_3_static/stereo/000041_left.png")
-    #
-    # # Generate the optic flow.
-    # curr_vect, vis_flo, np_pred_prob = flow_gen.generate_correspondences(to_rgb(bgr1), to_rgb(bgr2))
-    # cv2.imshow("Flow", vis_flo)
-    # cv2.imshow("Confidence", np_pred_prob)
-    # cv2.waitKey()
-    #
-    # # Load in the images.
-    # bgr1 = cv2.imread("/media/data/datasets/omd/primary/cars_3_static/stereo/000000_left.png")
-    # bgr2 = cv2.imread("/media/data/datasets/omd/primary/cars_3_static/stereo/000000_right.png")
-    #
-    # # Generate the disparities.
-    # curr_vect, vis_flo, np_pred_prob = stereo_gen.generate_correspondences(to_rgb(bgr1), to_rgb(bgr2))
-    # cv2.imshow("Disparities", vis_flo)
-    # cv2.imshow("Confidence", np_pred_prob)
-    # cv2.waitKey()
 
 
 if __name__ == "__main__":
