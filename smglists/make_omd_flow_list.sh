@@ -2,7 +2,7 @@
 
 rm -f flow*.txt
 
-ls /media/data/datasets/omd/$1/$2/stereo/*left.png | xargs -n1 basename | while read f
+ls /d/datasets/omd/$1/$2/stereo/*left.png | xargs -n1 basename | while read f
 do
 	echo "omd/$1/$2/stereo/$f" >> flow1.txt
 	cp flow1.txt flow2.txt

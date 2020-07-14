@@ -2,7 +2,7 @@
 
 rm -f stereo*.txt
 
-ls /media/data/datasets/omd/$1/$2/stereo/*left.png | xargs -n1 basename | while read f
+ls /d/datasets/omd/$1/$2/stereo/*left.png | xargs -n1 basename | while read f
 do
 	echo "omd/$1/$2/stereo/$f" >> stereo1.txt
 done
