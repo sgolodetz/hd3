@@ -14,12 +14,12 @@ import torch.backends.cudnn as cudnn
 import torch.optim
 import torch.utils.data
 
-import data.hd3data as datasets
-import data.flowtransforms as transforms
-import hd3model as models
-from utils.utils import *
-from models.hd3_ops import *
-import utils.flowlib as fl
+import smg.external.hd3.data.hd3data as datasets
+import smg.external.hd3.data.flowtransforms as transforms
+import smg.external.hd3.hd3model as models
+from smg.external.hd3.utils.utils import *
+from smg.external.hd3.models.hd3_ops import *
+import smg.external.hd3.utils.flowlib as fl
 
 
 # Setup

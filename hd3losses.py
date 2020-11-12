@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from models.hd3_ops import *
+from smg.external.hd3.models.hd3_ops import *
 
 
 class LossCalculator(object):

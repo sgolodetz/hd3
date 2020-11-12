@@ -1,8 +1,8 @@
 import torch
 import torch.nn as nn
-from models.hd3net import HD3Net
-from hd3losses import *
-from utils.visualizer import get_visualization
+from smg.external.hd3.models.hd3net import HD3Net
+from smg.external.hd3.hd3losses import *
+from smg.external.hd3.utils.visualizer import get_visualization
 
 
 class HD3Model(nn.Module):

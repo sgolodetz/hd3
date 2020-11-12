@@ -1,7 +1,7 @@
 from os.path import exists, join, splitext
 import numpy as np
 from PIL import Image
-import utils.flowlib as fl
+import smg.external.hd3.utils.flowlib as fl
 from torch.utils.data import Dataset
 from . import flowtransforms as transforms
 

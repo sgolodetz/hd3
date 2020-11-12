@@ -3,7 +3,7 @@ import numpy as np
 import torch
 import torch.nn.functional as F
 from . import flowlib as fl
-from models.hd3_ops import *
+from smg.external.hd3.models.hd3_ops import *
 
 
 def get_visualization(img_list, label_list, ms_vect, ms_prob, ds=6, idx=0):

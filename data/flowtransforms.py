@@ -6,7 +6,7 @@ import numpy as np
 from PIL import Image, ImageOps, ImageFilter
 import scipy.ndimage as ndimage
 import torch
-import utils.flowlib as fl
+import smg.external.hd3.utils.flowlib as fl
 
 
 class Compose(object):
